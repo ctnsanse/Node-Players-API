@@ -49,27 +49,24 @@ app.get("/api/players/:id", (req, res) => {
 })
 
 app.put("/api/players/:id", (req, res) => {
-    const player = req.body
-    const id = parseInt(req.params.id)
-    // TODO Check if player with id exists
+    const id = parseInt(req.params.id);
+        // TODO Check if player with id exists
     // if not return status code 404 Not Found
     // Hint: return res.end()
-    let playerExists = true
-    for (let index = 0; index < players.length; index++) {
-        if (players[index].id === players.id) {
-            playerExists = false
-            break
-        }
+
+    // Some pour vérifier si au moins un joueur dans le tableau "players" a le même ID que celui fourni dans la requête
+    const playerExists = players.some(player => player.id === id);
+
+    if (!playerExists) {
+        return res.status(404).json({ error: "Player does not exist" });
     }
-    if (playerExists) {
-        return res.end(409).json({ error: "Player exists" })
-    }
-    return
 
     // TODO Modify the player name
 
     // TODO Return modified player
-    res.send(` You have just modified ${player.name} !`)
+
+    // Retourner une réponse réussie ou toute autre chose
+    return res.status(200).json(` You have just modified ${players.name} !`)
 })
 
 app.delete("/api/players/:id", (req, res) => {
