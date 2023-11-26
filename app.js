@@ -50,7 +50,6 @@ app.get("/api/players/:id", (req, res) => {
 
 app.put("/api/players/:id", (req, res) => {
     const playerUpdate = req.body
-    // console.log(player)
     const id = parseInt(req.params.id);
     // TODO Check if player with id exists
     // if not return status code 404 Not Found
@@ -67,9 +66,7 @@ app.put("/api/players/:id", (req, res) => {
     playerUpdate[playerExists].name = req.body.name
 
     // TODO Return modified player
-
-    // Retourner une réponse réussie ou toute autre chose
-    return (` You have just modified ${playerExists} !`)
+    return (` You have just modified ${playerUpdate} !`)
 })
 
 app.delete("/api/players/:id", (req, res) => {
@@ -92,22 +89,3 @@ app.delete("/api/players/:id", (req, res) => {
 })
 
 app.listen(port, () => console.log(`Our Node application is started on : http://localhost:${port}`))
-
-
-
-// app.put("/api/players/:id", (req, res) => {
-//     const id = parseInt(req.params.id);
-
-//     // Vérifier si un joueur avec l'ID existe
-//     const playerToUpdate = players.find(player => player.id === id);
-
-//     if (!playerToUpdate) {
-//         return res.status(404).json({ error: "Player does not exist" });
-//     }
-
-//     // Modifier le nom du joueur avec le nouveau nom fourni dans le corps de la requête
-//     playerToUpdate.name = req.body.name;
-
-//     // Retourner le joueur modifié en tant que réponse
-//     return res.status(200).json({ message: `You have just modified ${players.name}!`, player: playerToUpdate });
-// })
