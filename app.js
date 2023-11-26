@@ -49,8 +49,10 @@ app.get("/api/players/:id", (req, res) => {
 })
 
 app.put("/api/players/:id", (req, res) => {
+    const playerUpdate = req.body
+    // console.log(player)
     const id = parseInt(req.params.id);
-        // TODO Check if player with id exists
+    // TODO Check if player with id exists
     // if not return status code 404 Not Found
     // Hint: return res.end()
 
@@ -62,16 +64,50 @@ app.put("/api/players/:id", (req, res) => {
     }
 
     // TODO Modify the player name
+    playerUpdate[playerExists].name = req.body.name
 
     // TODO Return modified player
 
     // Retourner une réponse réussie ou toute autre chose
-    return res.status(200).json(` You have just modified ${players.name} !`)
+    return (` You have just modified ${playerExists} !`)
 })
 
 app.delete("/api/players/:id", (req, res) => {
     // TODO Add coment and implementation
-    res.send(" Vous venez de supprimer un pokémon dans votre pokédex !")
+    const id = req.params.id * 1
+
+    //TODO Check if player with id exists
+    // if not return status code 404 Not Found
+    const playerExists = players.some(player => player.id === id)
+
+    if (!playerExists) {
+        return res.status(404).json({ error: "Player does not exist" })
+    }
+
+    //TODO delete a players
+    const playerToDelete = players.delete(playerExists)
+
+    //TODO return deleted player id and status code
+    res.status(200).json(` successfuly : Vous venez de supprimer ${players.name} de votre base de données !`)
 })
 
 app.listen(port, () => console.log(`Our Node application is started on : http://localhost:${port}`))
+
+
+
+// app.put("/api/players/:id", (req, res) => {
+//     const id = parseInt(req.params.id);
+
+//     // Vérifier si un joueur avec l'ID existe
+//     const playerToUpdate = players.find(player => player.id === id);
+
+//     if (!playerToUpdate) {
+//         return res.status(404).json({ error: "Player does not exist" });
+//     }
+
+//     // Modifier le nom du joueur avec le nouveau nom fourni dans le corps de la requête
+//     playerToUpdate.name = req.body.name;
+
+//     // Retourner le joueur modifié en tant que réponse
+//     return res.status(200).json({ message: `You have just modified ${players.name}!`, player: playerToUpdate });
+// })
