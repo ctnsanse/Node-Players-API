@@ -50,37 +50,36 @@ app.get("/api/players/:id", (req, res) => {
     return res.json(player)
 })
 
-app.put("/api/players/:id", (req, res) => {
+app.put("/api/players/:id", async (req, res) => {
     const playerUpdate = req.body
-    const id = parseInt(req.params.id);
-    // TODO Check if player with id exists
-    // if not return status code 404 Not Found
-    // Hint: return res.end()
+    const playerId = parseInt(req.params.id)
 
-    // Some pour vérifier si au moins un joueur dans le tableau "players" a le même ID que celui fourni dans la requête
+    // Vérifier si le joueur avec l'ID existe
     let playerExists = false
     for (let index = 0; index < players.length; index++) {
-        if (players[index].id === playerToCreate.id) {
+        if (players[index].id === playerId) {
             playerExists = true
+
+            // Modifier le nom du joueur
+            players[index].name = playerUpdate.name
             break
         }
     }
+
     if (!playerExists) {
         return res.status(404).json({ error: "Player does not exist" });
     }
 
-    // TODO Modify the player name
-    playerUpdate[playerExists].name = req.body.name
-
-    // TODO Return modified player
-    return (` You have just modified ${playerUpdate} !`)
+    // Retourner le joueur modifié
+    res.json({ message: `Player with ID ${playerId} has been updated`, player: players.find(player => player.id === playerId) });
 })
+
 
 app.delete("/api/players/:id", async (req, res) => {
     // TODO Add coment and implementation
     const playerToDelete = req.body
     console.log(playerToDelete)
-    const id = req.params.id * 1
+    const id = parseInt(req.params.id)
 
     // TODO Check if a player with the same name exists
     const playerExists = players.some(player => player.id === id)
