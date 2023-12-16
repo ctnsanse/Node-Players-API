@@ -77,23 +77,26 @@ app.put("/api/players/:id", async (req, res) => {
 
 app.delete("/api/players/:id", async (req, res) => {
     // TODO Add coment and implementation
-    const playerToDelete = req.body
-    console.log(playerToDelete)
-    const id = parseInt(req.params.id)
+    const playerId = parseInt(req.params.id)
 
     // TODO Check if a player with the same name exists
-    const playerExists = players.some(player => player.id === id)
+    let playerExists = false
+    for (let index = 0; index < players.length; index++) {
+        if (players[index].id === playerId) {
+            playerExists = true
+            break
+        }
+    }
 
-    // "!" signifie que si l'instruction sera executée que si il y a false.
     if (!playerExists) {
-        return res.status(409).json({ error: "Player no exists" })
+        return res.status(404).json({ error: "Player no exists" })
     }
 
     //TODO delete a players
-    delete players[id]
+    players.splice(playerExists)
 
     //TODO return deleted player id and status code
-    res.status(200).json(` successfuly : Vous venez de supprimer ${player.name} de votre base de données !`)
+    res.status(200).json(` successfuly : Vous venez de supprimer ${playerId} de votre base de données !`)
 })
 
 app.listen(port, () => console.log(`Our Node application is started on : http://localhost:${port}`))
