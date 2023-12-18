@@ -2,7 +2,7 @@
 
 const express = require("express")
 
-const players = require("./mock-players")
+let players = require("./mock-players")
 
 const player = require("./mock-players")
 
@@ -10,7 +10,7 @@ const app = express()
 app.use(express.json())
 const port = 3000
 
-app.post("/api/create/players", async (req, res) => {
+app.post("/api/players", async (req, res) => {
     const playerToCreate = req.body
     console.log(playerToCreate)
 
@@ -37,24 +37,36 @@ app.post("/api/create/players", async (req, res) => {
 
     // Store player
     players.push(playerToCreate)
-    res.status(201).json(playerToCreate)
+    res.status(201).json({ data: playerToCreate })
 })
 
 app.get("/api/players", (req, res) => {
-    return res.json(players)
+    return res.json({ data: players })
 })
 
 app.get("/api/players/:id", (req, res) => {
     const id = parseInt(req.params.id)
+    console.debug("id", id)
     const player = players.find(player => player.id === id)
-    return res.json(player)
+    console.debug("player", player)
+    return res.json({ data: player })
 })
 
 app.put("/api/players/:id", async (req, res) => {
     const playerUpdate = req.body
     const playerId = parseInt(req.params.id)
 
-    // TODO Check if player with id exists
+    const parameters = ['name']
+    for (const parameter of parameters) {
+        if (!Object.keys(playerUpdate).includes(parameter))
+            return res.status(400).json({ error: "Missing parameter " + parameter })
+    }
+
+    if (parameters.length !== Object.keys(playerUpdate)) {
+        return res.status(400).json({ error: "Unexpected number of parameters" })
+    }
+
+    // Check if player with id exists
     // Hint: return res.end()
     let playerExists = false
     for (let index = 0; index < players.length; index++) {
@@ -62,35 +74,37 @@ app.put("/api/players/:id", async (req, res) => {
             playerExists = true
 
             // TODO Modify the player name
-            players[index].name = playerUpdate.name
+            players[index] = { ...players[index], ...playerUpdate }
             break
         }
     }
 
     // if not return status code 404 Not Found
     if (!playerExists) {
-        return res.status(404).json({ error: "Player does not exist" });
+        return res.status(404).json({ error: `Player with ID ${playerId} does not exist` });
     }
 
     // TODO Return modified player
-    res.json({ message: `Player with ID ${playerId} has been updated`, player: players.find(player => player.id === playerId) });
+    res.json({ data: players.find(player => player.id === playerId) });
 })
 
 
 app.delete("/api/players/:id", async (req, res) => {
-    const playerId = req.params.id * 1
+    const playerId = parseInt(req.params.id)
+
     const playerToDelete = players.find(player => player.id === playerId)
-    const index = players.indexOf(playerToDelete)
+    console.debug("playerToDelete", playerToDelete)
 
     if (!playerToDelete) {
-        return res.status(404).json({ error: "Player does not exists" })
+        return res.status(404).json({ error: "Player does not exist" })
     }
 
     //TODO delete a players
-    players.splice(index, 1)
+    players = players.filter(player => player.id !== playerId)
+    console.debug("players", players)
 
     //TODO return deleted player id and status code
-    res.status(200).json(` successfuly : Vous venez de supprimer ${playerId} de votre base de données !`)
+    res.status(204).end()
 })
 
 app.listen(port, () => console.log(`Our Node application is started on : http://localhost:${port}`))
