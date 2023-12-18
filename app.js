@@ -54,23 +54,25 @@ app.put("/api/players/:id", async (req, res) => {
     const playerUpdate = req.body
     const playerId = parseInt(req.params.id)
 
-    // Vérifier si le joueur avec l'ID existe
+    // TODO Check if player with id exists
+    // Hint: return res.end()
     let playerExists = false
     for (let index = 0; index < players.length; index++) {
         if (players[index].id === playerId) {
             playerExists = true
 
-            // Modifier le nom du joueur
+            // TODO Modify the player name
             players[index].name = playerUpdate.name
             break
         }
     }
 
+    // if not return status code 404 Not Found
     if (!playerExists) {
         return res.status(404).json({ error: "Player does not exist" });
     }
 
-    // Retourner le joueur modifié
+    // TODO Return modified player
     res.json({ message: `Player with ID ${playerId} has been updated`, player: players.find(player => player.id === playerId) });
 })
 
@@ -81,7 +83,7 @@ app.delete("/api/players/:id", async (req, res) => {
     const index = players.indexOf(playerToDelete)
 
     if (!playerToDelete) {
-        return res.status(404).json({ error: "Player no exists" })
+        return res.status(404).json({ error: "Player does not exists" })
     }
 
     //TODO delete a players
